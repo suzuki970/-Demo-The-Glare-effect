@@ -2,6 +2,7 @@ clear all;
 close all;
 
 Screen('Preference', 'SkipSyncTests', 1);
+addpath(genpath('./toolBox'))
 
 %% --------------------paradigm settings------------------
 cfg = [];
