@@ -5,16 +5,25 @@ rng('shuffle');
 AssertOpenGL;
 
 %%participant's info
-prompt = 'Demo? 1:demo -- > ';
-demoMode = input(prompt);
-if demoMode~=1
-    demoMode = false;
+% prompt = 'Demo? 1:demo -- > ';
+% demoMode = input(prompt);
+% if demoMode~=1
+%     demoMode = false;
+% else
+%     demoMode = true;
+% end
+
+prompt = 'Sparse?[y] -->';
+tmp = input(prompt,'s');
+if tmp == 'y' || strcmp(tmp,'yes')
+    cfg.participantsInfo.sp = true;
 else
-    demoMode = true;
+    cfg.participantsInfo.sp = false;
 end
 
-prompt = 'Mode? 1:gradation, 2:rotation, 3:motion -- >';
+prompt = '\n[1]:Gradation\n[2]:Rotation\n[3]:Motion\nMode? -->';
 cfg.participantsInfo.mode = input(prompt);
+
 while 1
     if isempty(cfg.participantsInfo.mode)
         prompt = 'Name is null. try again -- > ';
@@ -44,11 +53,11 @@ HideCursor;
 ListenChar(2);
 myKeyCheck;
 
-if demoMode
-    useEyelink = false;     % eyelink
-else
-    useEyelink = true;     % eyelink
-end
+% if demoMode
+useEyelink = false;     % eyelink
+% else
+%     useEyelink = true;     % eyelink
+% end
 
 % set KeyInfo
 cfg.KEYNAME = [];
@@ -60,7 +69,7 @@ cfg.KEYNAME.NumKey6 = KbName('6');
 % set screen number
 screens=Screen('Screens');
 screenNumber=max(screens);
-% screenNumber=1;
+screenNumber=1;
 
 % making main screen and off screen window
 [win, rect] = Screen('OpenWindow',screenNumber, cfg.BGCOLOR);

@@ -11,8 +11,8 @@ for i_condition = [1:size(allGlareColors,2) size(allGlareColors,2)-1 :-1:1]
             Screen('Flip', win);
             
         end
-        %         imageArray=Screen('GetImage',win,[],[],0);
-        %         imwrite(imageArray,['test_' num2str((i_condition-1) * size(arrayNumFame,2)+i) '.png']);
+%         imageArray=Screen('GetImage',win,[],[],0);
+%         imwrite(imageArray,['test_' num2str((i_condition-1) * size(arrayNumFame,2)+i) '.png']);
         clear keyCode;
         [keyIsDown,secs,keyCode]=KbCheck;
         % interrupt by ESC

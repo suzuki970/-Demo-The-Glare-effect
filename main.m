@@ -45,16 +45,18 @@ for i = 1 : 7
 end
 
 makeGlareStim = makeGlareStim;
-for i = 1:size(rangeOfLum0,2)
-    [glareColors innerR] = makeGlareStim.makeGlare(space_xyYVal,ballNum,colors_xy,cfg.FRAME_RATE,cfg.FREQUENCY,rangeOfLum0(i),rangeOfLum1(i));
-    glareColors(:,[2 3 4 5 6 7])=[];
-    allGlareColors(:,i)=glareColors;
+if cfg.participantsInfo.sp
+    for i = 1:size(rangeOfLum0,2)
+        [glareColors innerR] = makeGlareStim.makeGlareGradation_Sparse(ballNum,cfg.FRAME_RATE,cfg.FREQUENCY,rangeOfLum0(i),rangeOfLum1(i));
+        allGlareColors(:,i)=glareColors;
+    end
+else
+    for i = 1:size(rangeOfLum0,2)
+        [glareColors innerR] = makeGlareStim.makeGlareGradation(space_xyYVal,ballNum,colors_xy,cfg.FRAME_RATE,cfg.FREQUENCY,rangeOfLum0(i),rangeOfLum1(i));
+        glareColors(:,[2 3 4 5 6 7])=[];
+        allGlareColors(:,i)=glareColors;
+    end
 end
-%
-% for i = 1:size(rangeOfLum0,2)
-%     [glareColors2 innerR] = makeGlare_gradation2(ballNum,cfg.FRAME_RATE,cfg.FREQUENCY,rangeOfLum0(i),rangeOfLum1(i));
-%     allGlareColors(:,i)=glareColors2;
-% end
 
 % set empty screen
 empty=Screen('OpenOffscreenWindow',screenNumber,cfg.BGCOLOR, [],[],32);

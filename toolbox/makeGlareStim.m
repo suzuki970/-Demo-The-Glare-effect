@@ -1,10 +1,13 @@
+
 function funs = makeGlareStim
-  funs.makeGlare=@makeGlare;
-  funs.makeGlareStim2=@makeGlareStim2;
-  funs.makeGlare2=@makeGlare2;
+funs.makeGlareGradation=@makeGlareGradation;
+funs.makeGlareGradation_Sparse=@makeGlareGradation_Sparse;
+funs.makeGlare2=@makeGlare2;
+funs.makeGlareBall = @makeGlareBall;
+funs.makeGlareBall_Sparse = @makeGlareBall_Sparse;
 end
 
-function [glareColors,innerR] = makeGlare(space_xyYVal, ballNum,colors_xy,frameRate,freq1,minL,maxL)
+function [glareColors,innerR] = makeGlareGradation(space_xyYVal, ballNum,frameRate,freq1,minL,maxL)
 
 outerR = 1000;
 innerR = round( (pi*outerR) / ballNum);
@@ -38,20 +41,21 @@ for i = 1 : 7
 end
 end
 
-function [glareColors,innerR] = makeGlareStim2(ballNum,frameRate,freq1,minL,maxL)
+function [glareColors,innerR] = makeGlareGradation_Sparse(ballNum,frameRate,freq1,minL,maxL)
 
 outerR = 1000;
 innerR = round( (pi*outerR) / ballNum);
+innerR = 1000;
 
 freq1_frame=frameRate/(freq1*2);
 for iFrame = 1:freq1_frame
-    tmp = round(linspace(0,255,innerR/(iFrame*4)));
+    tmp = round(linspace(minL,maxL,innerR/(iFrame*4)));
     tmp = repmat(tmp',1,round(innerR/size(tmp,2)));
     tmp = reshape(tmp',1,size(tmp,1)*size(tmp,2));
     if size(tmp,2) > innerR
         glareColors{iFrame,1} = repmat(tmp(1:innerR),3,1);
     else
-        glareColors{iFrame,1} = repmat([tmp ones(1,innerR-size(tmp,2))*255],3,1);
+        glareColors{iFrame,1} = repmat([tmp ones(1,innerR-size(tmp,2))*maxL],3,1);
     end
 end
 
@@ -105,6 +109,111 @@ cercleData = cat(2, ones(innerR+1,1,4)*bgcolor(1), cercleData);
 %         end
 %     end
 % end
+
+cercleData = cercleData(2:innerR,2:innerR,:);
+
+end
+
+function [ cercleData ] = makeGlareBall( cfg)
+
+innerR = cfg.innerR;
+bgcolor = cfg.bgcolor;
+upsilon = cfg.upsilon;
+
+% make alpha value
+cercleData = ones(innerR,innerR,4);
+cercleData(:,:,4) = 255;
+
+% make circle
+for i = 1:innerR
+    for j = 1:innerR
+        r1 = sqrt((innerR/2 - i)^2 + (innerR/2 - j)^2);
+        if r1 > innerR/2
+            cercleData(i,j,1:3) = 1;
+        end
+        if r1 > innerR/2
+            cercleData(i,j,4)   = 0;
+        end
+    end
+end
+
+if cfg.method == 1
+    if bgcolor(1) == bgcolor(2)
+        t = ones(1,innerR)*bgcolor(1);
+    else
+        t = repmat(bgcolor(1):(bgcolor(2)-bgcolor(1))/(innerR-1):bgcolor(2),3,1);
+    end
+    t = repmat(t,3,1);
+else
+    t = linspace(-6,6,innerR);
+    t = 1./(1+exp(-upsilon*t));
+    
+    %     t = linspace(0.001,0.999,innerR);
+    %     t = log(t./(1-t));
+    %     t = t + t(end);
+    %     t = t/max(t);
+    if bgcolor(1) == bgcolor(2)
+        t = ones(1,innerR)*bgcolor(1);
+    else
+        t = t*(bgcolor(2) - bgcolor(1)) + bgcolor(1);
+    end
+    t = repmat(t,3,1);
+end
+
+for i = 1:innerR
+    temp = find(cercleData(i,:,1) == 1);
+    if ~isempty(temp)
+        for rgbRoop = 1:3
+            cercleData(i,temp,rgbRoop) = t(rgbRoop,i);
+        end
+    end
+end
+
+cercleData = cat(1, ones(1,innerR,4)*bgcolor(2), cercleData);
+cercleData = cat(2, ones(innerR+1,1,4)*bgcolor(2), cercleData);
+
+cercleData = cercleData(2:innerR,2:innerR,:);
+
+end
+
+
+function [ cercleData ] = makeGlareBall_Sparse(cfg)
+
+innerR = cfg.innerR;
+bgcolor = cfg.bgcolor;
+upsilon = cfg.upsilon;
+
+ 
+% make alpha value
+cercleData = ones(innerR,innerR,4);
+cercleData(:,:,4) = 255;
+
+% make circle
+for i = 1:innerR
+    for j = 1:innerR
+        r1 = sqrt((innerR/2 - i)^2 + (innerR/2 - j)^2);
+        if r1 > innerR/2
+            cercleData(i,j,1:3) = 1;
+        end
+        if r1 > innerR/2
+            cercleData(i,j,4) = 0;
+        end
+    end
+end
+
+
+t = round(linspace(bgcolor(1),bgcolor(2),innerR/200));
+t = repmat(t',1,round(innerR/size(t,2)));
+t = reshape(t',1,size(t,1)*size(t,2));
+  
+for i = 1:innerR
+    temp = find(cercleData(i,:,1) == 1);
+    if ~isempty(temp)
+        for rgbRoop = 1:3
+            cercleData(i,temp,rgbRoop) = t(1,i);
+        end
+    end
+end
 
 cercleData = cercleData(2:innerR,2:innerR,:);
 
