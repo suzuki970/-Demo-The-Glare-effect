@@ -184,7 +184,7 @@ innerR = cfg.innerR;
 bgcolor = cfg.bgcolor;
 upsilon = cfg.upsilon;
 
- 
+
 % make alpha value
 cercleData = ones(innerR,innerR,4);
 cercleData(:,:,4) = 255;
@@ -206,7 +206,7 @@ end
 t = round(linspace(bgcolor(1),bgcolor(2),innerR/200));
 t = repmat(t',1,round(innerR/size(t,2)));
 t = reshape(t',1,size(t,1)*size(t,2));
-  
+
 for i = 1:innerR
     temp = find(cercleData(i,:,1) == 1);
     if ~isempty(temp)
@@ -224,15 +224,19 @@ function [glareColors,innerR] = makeGlareGradation_Sparse_adjust(step,minL,maxL)
 
 innerR = 1000;
 
-for iFrame = 1:step
-    tmp = round(linspace(minL,maxL,100/(iFrame)));
-    tmp = repmat(tmp',1,round(innerR/size(tmp,2)));
+numSplt = fliplr(round(linspace(3,maxL-minL,step)));
+
+for iFrame = 1:step    
+%     tmp = round(linspace(minL,maxL,numSplt(iFrame)));
+    tmp = round(linspace(minL,maxL,(step*2)/iFrame));
+    tmp = repmat(tmp',1,fix(innerR/size(tmp,2)));
     tmp = reshape(tmp',1,size(tmp,1)*size(tmp,2));
-    if size(tmp,2) > innerR
-        glareColors{iFrame,1} = repmat(tmp(1:innerR),3,1);
-    else
-        glareColors{iFrame,1} = repmat([tmp ones(1,innerR-size(tmp,2))*maxL],3,1);
-    end
+    
+    x = round(linspace(1,innerR,size(tmp,2)));
+    tmp = round(spline(x,tmp,1:innerR));
+    
+    glareColors{iFrame,1} = repmat(tmp,3,1);
+    
 end
 
 end
