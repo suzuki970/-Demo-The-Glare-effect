@@ -5,6 +5,7 @@ funs.makeGlareGradation_Sparse=@makeGlareGradation_Sparse;
 funs.makeGlare2=@makeGlare2;
 funs.makeGlareBall = @makeGlareBall;
 funs.makeGlareBall_Sparse = @makeGlareBall_Sparse;
+funs.makeGlareGradation_Sparse_adjust = @makeGlareGradation_Sparse_adjust;
 end
 
 function [glareColors,innerR] = makeGlareGradation(space_xyYVal, ballNum,frameRate,freq1,minL,maxL)
@@ -219,3 +220,19 @@ cercleData = cercleData(2:innerR,2:innerR,:);
 
 end
 
+function [glareColors,innerR] = makeGlareGradation_Sparse_adjust(step,minL,maxL)
+
+innerR = 1000;
+
+for iFrame = 1:step
+    tmp = round(linspace(minL,maxL,100/(iFrame)));
+    tmp = repmat(tmp',1,round(innerR/size(tmp,2)));
+    tmp = reshape(tmp',1,size(tmp,1)*size(tmp,2));
+    if size(tmp,2) > innerR
+        glareColors{iFrame,1} = repmat(tmp(1:innerR),3,1);
+    else
+        glareColors{iFrame,1} = repmat([tmp ones(1,innerR-size(tmp,2))*maxL],3,1);
+    end
+end
+
+end
