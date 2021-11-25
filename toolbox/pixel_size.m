@@ -8,7 +8,7 @@ function pixel_num = pixel_size(dotpitch, visual_angle , visual_range)
 visual_angle = visual_angle * (pi/180);   % Degree to radian
 a = visual_range * tan(visual_angle); % output = ?�?�cm
 a = a * 10;  % cm to mm
-disp([num2str(a),'mm'])
+% disp([num2str(a),'mm'])
 pixel_num = a / dotpitch;
 end
 
